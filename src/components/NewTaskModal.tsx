@@ -6,7 +6,7 @@ import { ChevronDownIcon } from "@heroicons/react/16/solid";
 import CustomNumberField from "./CustomNumberField";
 import { Dayjs } from "dayjs";
 import React from "react";
-import { Colors } from "../App";
+import { Colors } from "../Dashboard";
 import Task from "../model/Task";
 
 interface ModalProps {
