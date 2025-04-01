@@ -7,6 +7,7 @@ export class Task {
   private _frequency_unit: string;
   private _nextNotif: Dayjs;
   private _color: string;
+  private _id: number;
 
   public constructor(
     name: string,
@@ -14,7 +15,8 @@ export class Task {
     frequency_val: number,
     frequency_unit: string,
     nextNotif: Dayjs,
-    color: string
+    color: string,
+    id: number
   ) {
     this._name = name;
     this._description = description;
@@ -22,11 +24,16 @@ export class Task {
     this._frequency_unit = frequency_unit;
     this._nextNotif = nextNotif;
     this._color = color;
+    this._id = id;
   }
 
   public getNextNotif(): Dayjs {
     return this._nextNotif; // TODO + this._frequency;
     // lol
+  }
+
+  public get id(): number {
+    return this._id;
   }
 
   public get name(): string {

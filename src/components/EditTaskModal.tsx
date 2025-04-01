@@ -11,17 +11,28 @@ import Task from "../model/Task";
 
 interface ModalProps {
   closeModal: () => void;
-  save: (task: Task) => void;
+  saveChanges: (task: Task) => void;
+  deleteTask: (taskId: number) => void;
+  task: Task | null;
 }
 
-const NewTaskModal = (props: ModalProps) => {
-  const [freqValue, setFreqValue] = React.useState(1);
-  const [freqUnit, setFreqUnit] = React.useState("day");
-  const [name, setName] = React.useState("");
-  const [description, setDescription] = React.useState("");
-  const [dueDate, setDueDate] = React.useState<Dayjs | null>(null);
-  const [selectedColor, setSelectedColor] =
-    React.useState<keyof typeof Colors>("blue");
+const EditTaskModal = (props: ModalProps) => {
+  const [freqValue, setFreqValue] = React.useState(
+    props.task?.frequency_val || 1
+  );
+  const [freqUnit, setFreqUnit] = React.useState(
+    props.task?.frequency_unit || "day"
+  );
+  const [name, setName] = React.useState(props.task?.name || "");
+  const [description, setDescription] = React.useState(
+    props.task?.description || ""
+  );
+  const [dueDate, setDueDate] = React.useState<Dayjs | null>(
+    props.task?.nextNotif || null
+  );
+  const [selectedColor, setSelectedColor] = React.useState<keyof typeof Colors>(
+    (props.task?.color as keyof typeof Colors) || "blue"
+  );
 
   const handleNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setName(event.target.value);
@@ -47,8 +58,8 @@ const NewTaskModal = (props: ModalProps) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    if (dueDate) {
-      props.save(
+    if (dueDate && props.task) {
+      props.saveChanges(
         new Task(
           name,
           description,
@@ -56,10 +67,17 @@ const NewTaskModal = (props: ModalProps) => {
           freqUnit,
           dueDate,
           selectedColor,
-          Math.floor(Math.random() * (50 + 1)) + 50
+          props.task.id
         )
       );
     }
+    props.closeModal();
+  };
+
+  const onClickDelete = () => {
+    console.log("here's the id:");
+    console.log(props.task?.id);
+    props.deleteTask(props.task?.id || -1);
     props.closeModal();
   };
 
@@ -67,9 +85,9 @@ const NewTaskModal = (props: ModalProps) => {
     <form onSubmit={handleSubmit} className="m-8">
       <div className="space-y-12">
         <div>
-          <h2 className="text-base/7 font-semibold text-gray-900">New Task</h2>
+          <h2 className="text-base/7 font-semibold text-gray-900">Your Task</h2>
           <p className="mt-1 text-sm/6 text-gray-600">
-            Fill out the details to get a reminder for your new task!
+            View and edit the details of your task.
           </p>
 
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
@@ -209,6 +227,13 @@ const NewTaskModal = (props: ModalProps) => {
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <button
           type="button"
+          className="text-sm/6 font-semibold text-red-700 hover:bg-red-50 px-3 py-2 rounded-md"
+          onClick={onClickDelete}
+        >
+          Delete
+        </button>
+        <button
+          type="button"
           className="text-sm/6 font-semibold text-gray-900"
           onClick={props.closeModal}
         >
@@ -226,4 +251,4 @@ const NewTaskModal = (props: ModalProps) => {
   );
 };
 
-export default NewTaskModal;
+export default EditTaskModal;
